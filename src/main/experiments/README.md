@@ -13,6 +13,7 @@ If you wish to run the pre-process script yourself, you can run the following co
 ```
 python script.py proc --dir data/sh30-c100 --delta 30
 python script.py proc --dir data/sh30-c50 --delta 30 --cluster_path exploratory_analysis/mog_50.npy
+python script.py proc --dir data/sh30-cinf --detla 30 --cluster_path false
 ```
 
 2. Pre-computed clusters

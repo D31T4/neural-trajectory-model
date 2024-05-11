@@ -14,3 +14,9 @@ def default_tdrive_dataset_path():
     path to T-drive dataset
     '''
     return str(ROOT.joinpath('data/tdrive'))
+
+def default_geolife_dataset_path():
+    '''
+    path to geolife dataset
+    '''
+    return str(ROOT.joinpath('data/geolife/Data'))

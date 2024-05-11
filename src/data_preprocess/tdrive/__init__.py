@@ -35,7 +35,7 @@ class TDrivePreprocessConfig(PreprocessConfig):
         - discretizer: discretization scheme. No discretization if `None`
         - expected_speed: expected speed of the user. compute average from dataframe if set to `None`
         '''
-        assert expected_speed >= 0
+        assert expected_speed == None or expected_speed >= 0
 
         super().__init__(
             delta_min, 
@@ -130,7 +130,7 @@ def average_speed(df: pd.DataFrame):
     ---
     - expected speed
     '''
-    loc = np.radians(df[['lat', 'long']].to_numpy())
+    loc = df[['lat', 'long']].to_numpy()
     time = pd.to_datetime(df['t']).astype(np.int64).to_numpy() / 1e9
 
     dx = haversine(loc[1:], loc[:-1])
@@ -192,12 +192,15 @@ def interpolate(df: pd.DataFrame, config: TDrivePreprocessConfig) -> pd.DataFram
         if prev_loc == None:
             prev_loc = curr_loc
 
+        delta_t: timedelta = row['t'] - prev_t
+
         # same location, assume stationary
         if prev_loc == curr_loc:
             prev_t = row['t']
             continue
 
-        if (row['t'] - prev_t).total_seconds() <= sample_interval * 60:
+
+        if delta_t.total_seconds() <= sample_interval * 60:
             continue
         
         p0, p1 = coord_map.to_cartesian(np.array([
@@ -222,10 +225,11 @@ def interpolate(df: pd.DataFrame, config: TDrivePreprocessConfig) -> pd.DataFram
         prev_t = row['t']
         prev_loc = curr_loc
 
-    # add final point
-    new_points.append(
-        (config.uid, config.start_date + timedelta(days=config.n_day), prev_loc[1], prev_loc[0])
-    )
+    if prev_loc != None:
+        # add final point
+        new_points.append(
+            (config.uid, config.start_date + timedelta(days=config.n_day), prev_loc[1], prev_loc[0])
+        )
         
     new_points_df = pd.DataFrame.from_records(new_points, columns=['uid', 't', 'long', 'lat'])
 
@@ -240,6 +244,9 @@ def preprocess(df: pd.DataFrame, config: TDrivePreprocessConfig) -> list[Traject
         (39.75 <= df['lat']) & (df['lat'] <= 40.026) &
         (116.2 <= df['long']) & (df['long'] <= 116.55)
     ]
+
+    if len(df) == 0:
+        return []
 
     # interpolate
     df = interpolate(df, config)

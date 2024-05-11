@@ -10,8 +10,6 @@ from src.data_preprocess.trajectory import to_dataframe, Trajectory, PreprocessC
 from src.data_preprocess.point import Discretizer, NearestNeighborDiscretizer
 from src.path import default_shanghai_dataset_path, ROOT
 
-import argparse
-
 def extract_date_range(fname: str):
     '''
     extract date range from file name
@@ -93,7 +91,6 @@ def run_preprocess(config: ScriptConfig):
     '''
     dataset_path = default_shanghai_dataset_path()
 
-
     # sort by file start date
     fnames = sorted(os.listdir(dataset_path), key=lambda fname: float(fname.split('~')[0][5:]))
 
@@ -155,7 +152,6 @@ def run_csv(dir: str):
 
 if __name__ == '__main__':
     import argparse
-    import os
 
     parser = argparse.ArgumentParser(
         description='run pre-process script of Shanghai Telecom dataset'
