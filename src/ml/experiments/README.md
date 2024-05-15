@@ -15,6 +15,10 @@ python script.py proc --dir data/sh30-c100 --delta 30
 python script.py proc --dir data/sh30-c50 --delta 30 --cluster_path exploratory_analysis/mog_50.npy
 ```
 
+The test set contains all trajectories from 2014-06-18 to 2014-07-02 (1309 trajectories in total). The test set is not used here.
+
+We use 80% of the rest as the training set and 20% as the validation set. Note that the test set and the training set can have trajectories from the same users.
+
 2. Pre-computed clusters
 
 Pre-computed clusters available at [`exploratory_analysis/mog_100.npy`](../../../exploratory_analysis/mog_100.npy) (100 clusters) and [`exploratory_analysis/mog_50.npy`](../../../exploratory_analysis/mog_50.npy) (50 clusters). They are included in the project repository by default.

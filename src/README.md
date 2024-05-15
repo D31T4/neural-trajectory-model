@@ -13,25 +13,13 @@ This GPS trajectory dataset was collected in (Microsoft Research Asia) Geolife p
 ## Dataset Preprocessing
 1. **Shanghai**: See [here](data_preprocess/shanghai/README.md#script-usage).
 
-2. **Geolife**: *data_preprocess/preprocessing_Geolife.ipynb*
-    - Input: Downloaded data in current directory
-    - Preprocesssing steps: Data reading, outliers removal, data interpolation, data discretization, data export
-    - Output: CSV file for each day
+2. **Geolife**: See [here](data_preprocess/geolife/README.md#script-usage).
 
 ## Baseline model
 1. **Algorithm implementation**: See [`src/main`](main/README.md)
 
 2. **Evaluation**: See [`src/main/experiments`](main/experiments/README.md)
 
-## LSTM model
-*ml/lstm.ipynb*
-- Prerequisite: Processed data in csv file with standardized format, required library
-- Functionality: Include all functions and procedures for data input pipeline, model definition, model training, model saving and model predictions
-
-*ml/visualize_lstm.ipynb*
-- Prerequisite: Predicted dataframe and ground truth dataframe in standardized format, required library
-- Functionality: Display prediction results for 1 step or whole day
-
 ## Transformer based model
 
-See [here](ml/experiments/README.md).
+See [here](ml/README.md).

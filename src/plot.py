@@ -9,6 +9,12 @@ def get_shanghai_map() -> folium.Map:
     '''
     return folium.Map(location=[31.11, 121.49], tiles="CartoDB Positron", zoom_start=8.5)
 
+def get_beijing_map() -> folium.Map:
+    '''
+    get beijing map
+    '''
+    return folium.Map(location=[39.9, 116.4], tiles='CartoDB Positron',zoom_start=10.5)
+
 def plot_trajectory(trajectory: Trajectory, color: str, map: folium.Map = None, marker: bool = True) -> folium.Map:
     '''
     plot trajectory on map
@@ -22,7 +28,7 @@ def plot_trajectory(trajectory: Trajectory, color: str, map: folium.Map = None, 
     map = map or get_shanghai_map()
 
     if marker:
-        for p in set(p for p in trajectory.points if p is not None):
+        for p in set(p for p in trajectory if p is not None):
             folium.CircleMarker(p, radius=2, weight=5, color=color).add_to(map)
 
     prev: int = 0

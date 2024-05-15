@@ -6,11 +6,15 @@
 
 The no. of concurrent users in each base stations are too low to evaluate the reconstruction attack. 
 
-Hence, we apply clustering to aggregate nearby base stations. We used Gaussian mixture models on the all base station locations to compute the clusters. And finally, we compute the nearest neighbor of each base station to find its assigned cluster.
+Hence, we apply clustering to aggregate nearby base stations. We used Gaussian mixture models on the all base station locations to compute the clusters. And finally, we compute the nearest neighbor of each base station to find its assigned cluster. 
+
+We use nearest neighbor due to 2 reasons: 
+1. avoid ambiguity of overlapping clusters.
+2. sub-linear time complexity using pre-computed index.
 
 ### Missing records
 
-Missing records of each users in each day are interpolated by filling with the last known position.
+Missing records of each users in each day are interpolated by filling with the last known position. We used this method instead of linear interpolation in Trajectory Recovery from Ash because we think this dataset is too sparse for the usage of linear interpolation.
 
 Missing records before the first known position are filled with the first known position.
 

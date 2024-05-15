@@ -363,8 +363,6 @@ class DenseCrossDayTrajectoryRecovery(CrossDayTrajectoryRecovery):
         '''
         Implements information gain in step-3 of Trajectory Recovery from Ash with chunked vectorization.
 
-        Note: seem to be the bottle neck of the algorithm. maybe optimize it using sparse matrix?
-
         Args:
         ---
         - l1: trajectories[n2]
@@ -392,6 +390,7 @@ class DenseCrossDayTrajectoryRecovery(CrossDayTrajectoryRecovery):
                 j = j * chunk_size
 
                 # vectorized entropy computation
+                # note: run this on gpu if still too slow
                 pairwise_merged_entropy = DenseCrossDayTrajectoryRecovery.entropy(
                     self.counts[i:i + chunk_size, None] + next_counts[None, j:j + chunk_size]
                 )

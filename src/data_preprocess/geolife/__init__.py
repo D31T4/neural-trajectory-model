@@ -68,9 +68,6 @@ def average_speed(df: pd.DataFrame):
     ---
     - expected speed
     '''
-    if len(df) <= 1:
-        return 0
-
     loc = df[['lat', 'long']].to_numpy()
     time = pd.to_datetime(df['t']).astype(np.int64).to_numpy() / 1e9
 
@@ -84,6 +81,9 @@ def average_speed(df: pd.DataFrame):
     # remove stationary periods
     dt = dt[dx > 100]
     dx = dx[dx > 100]
+
+    if dx.shape[0] == 0:
+        return 0
 
     return np.mean(dx / dt)
 
@@ -139,7 +139,7 @@ def interpolate(df: pd.DataFrame, config: GeoLifePreprocessConfig) -> pd.DataFra
 
         # same location, assume stationary
         # skip if difference > 1 day
-        if prev_loc == curr_loc or delta_t.days >= 1:
+        if prev_loc == curr_loc or delta_t.days >= 2:
             prev_t = row['t']
             continue
 
