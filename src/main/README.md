@@ -4,6 +4,8 @@ Implements trajectory recovery algorithm from [Trajectory Recovery from Ash](htt
 
 Since we don't know the threshold described in Section 4.3 in the paper, we skipped this approxmiation.
 
+Euclidean distance in step-1 and step-2 is computed by converting lat-long to Cartesian coordinates using the method described [here](../ml/README.md#feature-pre-processing).
+
 We used the `linear_sum_assignment` function in the `scipy` package to compute bipartite matching.
 
 ## Computational bottleneck at information gain computation

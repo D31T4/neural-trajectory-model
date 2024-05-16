@@ -4,13 +4,15 @@
 
 ### Clustering
 
-The no. of concurrent users in each base stations are too low to evaluate the reconstruction attack. 
+The no. of concurrent users in each base stations are too low to evaluate the reconstruction attack as most users can be uniquely identified by their connected basestations. 
 
-Hence, we apply clustering to aggregate nearby base stations. We used Gaussian mixture models on the all base station locations to compute the clusters. And finally, we compute the nearest neighbor of each base station to find its assigned cluster. 
+Hence, we apply clustering to aggregate nearby base stations. We used Gaussian mixture models on the all base station locations to compute the clusters. To compute high quality clusters, we applied the Gaussian mixture algorithm in the scikit-learn package with spherical variance on the set of unique base stations. The Gaussian mixture algorithm consists of 2 steps: 1) compute k-means clustering to obtain the initial clusters; 2) iterative expectation maximization. The distribution of resultant clusters visually resembles the original base stations in the dataset, where the density is higher in urban areas.
 
-We use nearest neighbor due to 2 reasons: 
+And finally, we compute the nearest neighbor of each base station to find its assigned cluster. We use nearest neighbor due to 2 reasons: 
 1. avoid ambiguity of overlapping clusters.
 2. sub-linear time complexity using pre-computed index.
+
+To choose a good number of clusters, we plot the effects of the number of clusters on the number of non-stationary persistent users (users who have been to at least 3 locations every day in a chosen week), and the average number of concurrent users. We observed that using a small number of clusters would increase the probability of base stations being assigned to the same base stations, resulting in users appearing to be stationary as the base stations in their trajectories being assigned in the same cluster. Since stationary users are not desirable for assessing the day time recovery part of the algorithm, we ended up using 100 clusters which we believe is a good balance between reducing identifying power of individual base stations, and preserving movement of users across base stations.
 
 ### Missing records
 
