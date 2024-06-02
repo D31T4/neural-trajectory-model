@@ -14,6 +14,7 @@ from src.utils import haversine
 class TDrivePreprocessConfig(PreprocessConfig):
     def __init__(
         self,
+        uid: str,
         delta_min: int, 
         start_date: datetime, 
         n_day: int, 
@@ -48,24 +49,7 @@ class TDrivePreprocessConfig(PreprocessConfig):
         )
 
         self.expected_speed = expected_speed
-        self.uid: int = None
-
-def read_txt(fname: str) -> pd.DataFrame:
-    '''
-    read t-drive dataset txt files
-
-    Args:
-    ---
-    - fname: file name
-
-    Returns:
-    ---
-    - dataframe
-    '''
-    df = pd.read_csv(fname, sep=',', header=None, names=['uid', 't', 'long', 'lat'])
-    df['t'] = pd.to_datetime(df['t'], format='%Y-%m-%d %H:%M:%S')
-
-    return df
+        self.uid = uid
 
 def get_records(df: pd.DataFrame, config: TDrivePreprocessConfig) -> list[list[Record]]:
     '''
@@ -144,6 +128,9 @@ def average_speed(df: pd.DataFrame):
     dt = dt[dx > 100]
     dx = dx[dx > 100]
 
+    if dx.shape[0] == 0:
+        return 0
+
     return np.mean(dx / dt)
 
 def interpolate(df: pd.DataFrame, config: TDrivePreprocessConfig) -> pd.DataFrame:
@@ -182,15 +169,12 @@ def interpolate(df: pd.DataFrame, config: TDrivePreprocessConfig) -> pd.DataFram
 
     # interpolate if needed
     prev_t: datetime = config.start_date
-    prev_loc: LatLong = None
+    prev_loc: LatLong = (df.iloc[0]['lat'], df.iloc[0]['long'])
 
-    new_points = []
+    new_points = [(config.uid, config.start_date, prev_loc[1], prev_loc[0])]
 
     for _, row in tqdm.tqdm(df.iterrows(), total=len(df), disable=not config.verbose, desc='continuous interpolation'):
         curr_loc = (row['lat'], row['long'])
-
-        if prev_loc == None:
-            prev_loc = curr_loc
 
         delta_t: timedelta = row['t'] - prev_t
 
@@ -238,7 +222,7 @@ def interpolate(df: pd.DataFrame, config: TDrivePreprocessConfig) -> pd.DataFram
     
     return df
 
-def preprocess(df: pd.DataFrame, config: TDrivePreprocessConfig) -> list[Trajectory]:
+def preprocess(df: pd.DataFrame, config: TDrivePreprocessConfig) -> list[dict[str, Trajectory]]:
     # filter df
     df = df[
         (39.75 <= df['lat']) & (df['lat'] <= 40.026) &
@@ -265,30 +249,3 @@ def preprocess(df: pd.DataFrame, config: TDrivePreprocessConfig) -> list[Traject
         out.append(trajectories)
 
     return out
-
-if __name__ == '__main__':
-    '''
-    dry run
-    '''
-    from src.data_preprocess.point import NearestNeighborDiscretizer
-    from src.path import default_tdrive_dataset_path, ROOT
-
-    discretizer = NearestNeighborDiscretizer(np.load(f'{ROOT}/exploratory_analysis/tdrive_mog100.npy'))
-
-    config = TDrivePreprocessConfig(
-        delta_min=30,
-        start_date=datetime(2008, 2, 4),
-        n_day=7,
-        verbose=True,
-        interp_trajectory=True,
-        discretizer=discretizer
-    )
-
-    config.uid = 1
-
-    preprocess(
-        read_txt(f'{default_tdrive_dataset_path()}/1.txt'), 
-        config
-    )
-
-    print('dry run completed!')
